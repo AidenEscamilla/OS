@@ -15,7 +15,7 @@ int main(int argc, char *argv[]){
 	struct utsname buffer;
 
 	//This is the getdomainname function from the man pages
-	//then
+	//then it prints the name
 	getdomainname(name, len);
 	printf("\n");
 	printf("Domain name is: %s", name);
