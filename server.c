@@ -1,3 +1,4 @@
+#include <sys/wait.h>
 #include <stdio.h>
 #include <unistd.h>
 //#include <errno.h>
@@ -9,6 +10,11 @@
 
 
 #define MAXLEN 100
+#define MAGICNUM 9
+
+
+bool isMagicSquare(char magicSquare[]);
+
 int main(int argc, char *argv[]){
 
 	//these are the variables in the gethostname() man pages
@@ -42,7 +48,7 @@ int main(int argc, char *argv[]){
 	printf("uname domain name: %s\n", buffer.__domainname);
 
 
-	char filename[MAXLEN], clientFifio[MAXLEN], serverFifo[MAXLEN], line[MAXLEN];
+	char filename[MAXLEN], clientFifo[MAXLEN], magicSquare[MAGICNUM + 1], line[MAXLEN];
 
 	sprintf(filename, "/tmp/%s", "aae180003");
 	mkfifo(filename, 0666);
@@ -52,12 +58,73 @@ int main(int argc, char *argv[]){
 
 	while(1){
 
+		if(receive_string(fp, clientFifo)){
+			FILE *client = fopen(clientFifo, "r");
+			
+			while(1)
+			{
+			if(receive_string(client, magicSquare)){
+				for(int i = 0; i < MAGICNUM; i++){
+					printf("%c ", magicSquare[i]);
+				}
+				printf("\n");
 
-		if(receive_string(fp, line)){
+
+				 printf(isMagicSquare(&magicSquare));
+
+
+				 fclose(client);
+				break;
+
+			}
+			}
+			remove(clientFifo);
 			fclose(fp);
 			fp = fopen(filename, "r");
 		}
 
 	}
 
+}
+
+
+bool isMagicSquare(char magicSquare[]){
+
+int sumRow = 0, sumCol = 0, sumDiag = 0, sum = 0;
+int square[3][3];
+
+for(int i = 0; i < 3; i++){
+	for(int j = 0; j < 3; j++)
+		square[i][j] = atoi(magicSquare[i+j]);
+}
+//set sum to row1
+for(int i = 0; i < 3; i++)
+	sum += square[i][0];
+//set row and col sum
+for(int i = 0; i < 3; i++){
+	sumRow = 0;
+	sumCol = 0;
+    for(int j = 0; j < 3; j++){
+	sumRow += square[i][j];
+	sumCol += square[j][i];
+    }
+	if(sumRow != sum){return false;}
+	if(sumCol != sum){return false;}
+}
+
+
+for(int i = 0; i < 3; i++)
+	sumDiag = square[i][i];
+
+if(sumDiag != sum){return false;}
+
+sumDiag = 0;
+for(int i = 0; i < 3; i++){
+	int j = 3;
+	sumDiag += square[i][j--];
+}
+
+if(sumDiag != sum){return false;}
+
+return true;
 }
