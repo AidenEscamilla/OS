@@ -10,7 +10,7 @@
 
 int main(int argc, char * argv[]){
 
-	char filename[MAXLEN], clientFifo[MAXLEN];
+	char filename[MAXLEN], clientFifo[MAXLEN], result[MAXLEN];
 	char magicSquare[MAGICNUM+1];
 //	int magicSquare[9];
 	sprintf(filename, "/tmp/%s", "aae180003");
@@ -39,7 +39,14 @@ int main(int argc, char * argv[]){
 	send_string(fp, magicSquare);
 	fclose(fp);
 
-//	remove(clientFifo);
+	fp = fopen(clientFifo, "r");
+	receive_string(fp, result);
+	fclose(fp);
+	
+	if(result[0] == '1')
+	printf("Proper magic square entered\n");
+	else
+	printf("Not a magic square\n");
 //	fprintf(fp, "hello server im a client\n");
 //	fflush(fp);
 //	fclose(fp);

@@ -13,7 +13,7 @@
 #define MAGICNUM 9
 
 
-bool isMagicSquare(char magicSquare[]);
+bool isMagicSquare(char *magicSquare);
 
 int main(int argc, char *argv[]){
 
@@ -48,7 +48,7 @@ int main(int argc, char *argv[]){
 	printf("uname domain name: %s\n", buffer.__domainname);
 
 
-	char filename[MAXLEN], clientFifo[MAXLEN], magicSquare[MAGICNUM + 1], line[MAXLEN];
+	char filename[MAXLEN], clientFifo[MAXLEN], magicSquare[MAGICNUM + 1];// line[MAXLEN];
 
 	sprintf(filename, "/tmp/%s", "aae180003");
 	mkfifo(filename, 0666);
@@ -57,12 +57,12 @@ int main(int argc, char *argv[]){
 
 
 	while(1){
-
 		if(receive_string(fp, clientFifo)){
 			FILE *client = fopen(clientFifo, "r");
 			
 			while(1)
 			{
+
 			if(receive_string(client, magicSquare)){
 				for(int i = 0; i < MAGICNUM; i++){
 					printf("%c ", magicSquare[i]);
@@ -70,17 +70,26 @@ int main(int argc, char *argv[]){
 				printf("\n");
 
 
-				 printf(isMagicSquare(&magicSquare));
+//				 printf("%d\n",isMagicSquare(magicSquare));
+				fclose(client);
+				client = fopen(clientFifo, "w");
+				char result[MAXLEN];
+				
 
+				if(isMagicSquare(magicSquare))
+					sprintf(result, "1");
+				else
+					sprintf(result, "0");
 
-				 fclose(client);
+				send_string(client, result);
 				break;
-
+				fclose(client);
 			}
-			}
-			remove(clientFifo);
 			fclose(fp);
 			fp = fopen(filename, "r");
+			}
+//			remove(clientFifo);
+//			fclose(fp);
 		}
 
 	}
@@ -88,18 +97,23 @@ int main(int argc, char *argv[]){
 }
 
 
-bool isMagicSquare(char magicSquare[]){
+bool isMagicSquare(char *magicSquare){
 
 int sumRow = 0, sumCol = 0, sumDiag = 0, sum = 0;
 int square[3][3];
+int counter = 0;
 
 for(int i = 0; i < 3; i++){
-	for(int j = 0; j < 3; j++)
-		square[i][j] = atoi(magicSquare[i+j]);
+	for(int j = 0; j < 3; j++){
+		square[i][j] = (magicSquare[counter] - '0');
+		printf("%d%d: %d\n", i,j, square[i][j]);
+		counter++;
+	}
 }
 //set sum to row1
 for(int i = 0; i < 3; i++)
 	sum += square[i][0];
+
 //set row and col sum
 for(int i = 0; i < 3; i++){
 	sumRow = 0;
@@ -112,17 +126,17 @@ for(int i = 0; i < 3; i++){
 	if(sumCol != sum){return false;}
 }
 
-
 for(int i = 0; i < 3; i++)
-	sumDiag = square[i][i];
+	sumDiag += square[i][i];
 
 if(sumDiag != sum){return false;}
-
 sumDiag = 0;
+
 for(int i = 0; i < 3; i++){
-	int j = 3;
+	int j = 2;
 	sumDiag += square[i][j--];
 }
+printf("second diag: %d\n", sumDiag);
 
 if(sumDiag != sum){return false;}
 
