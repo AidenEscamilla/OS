@@ -1,3 +1,15 @@
+/*************************************
+*File: util6.h
+*Author: Jey veerasam (UTD UNIX Professor)
+*
+*
+*
+*
+*
+*
+*
+*************************************/
+
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>

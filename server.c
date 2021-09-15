@@ -2,21 +2,12 @@
 *File: client.c
 *Author: Aiden Escamilla
 *Procedues: 
-* main	- Thebgy
+* main	- The function opens it's server pipe, handles the new 
+*	  client pipe, and tells the client if it recived a
+*	  valid magic square or not.
 *
-*
-*
-*
-*
-* isMagicSquare  - 
-*
-*
-*
-*
-*
-*
-*
-*
+* isMagicSquare  - This function takes the char array and determines
+*		   if it is a magic square or not
 *
 *
 ******************************************************/
@@ -38,6 +29,21 @@
 
 bool isMagicSquare(char *magicSquare);
 
+/*
+*int main(int argc, char* argv[])
+*Author: Aiden Escamilla
+*Date: 15 September 2021
+*
+*
+*Description: 
+*
+*
+*
+*Parameters
+*	argc	I/P	int 	the number of arguments on the command line
+*	argv	I/P	char*[]	The arguments of the command line
+*	main	O/P	int	status code (not currently used)
+*/
 int main(int argc, char *argv[]){
 
 	//these are the variables in the gethostname() man pages
@@ -58,7 +64,7 @@ int main(int argc, char *argv[]){
 	//GetHostName from man pages, prints output
 	gethostname(name, len);
 	printf("\n");
-	printf("Host name is: %s", name);
+	printf("Host name is: %s\n", name);
 
 	//uname from man pages, print entire struct
 	printf("\n");
@@ -110,11 +116,12 @@ int main(int argc, char *argv[]){
 					sprintf(result, "0");	//else put false
 
 				send_string(client, result);	//send result
-				break;				//escape inner while and go back to waiting for clients
-								//could also use exit(0); for simple code
 				fclose(client);			//close client pipe, need this before the break statment;
+				fclose(fp);	//close server pipe, maybe remove because clients close for us
+				remove(filename);//clean up server pipe
+				break;	//break out of loop
+			// not needed?	exit(0);	//end code				//could also use exit(0); for simple code
 			}
-			fclose(fp);	//close server pipe, maybe remove because clients close for us
 			fp = fopen(filename, "r");	//open pipe to look for new clients 
 			}
 //			remove(clientFifo); //is this needed for pipe clean up?
@@ -124,10 +131,18 @@ int main(int argc, char *argv[]){
 
 
 /*
-
-isMagicSquare: returns boolean result after determening if the 
-given char array is or isnt a magic square
-
+*
+*bool isMagicSquare(char* magicSquare)
+*Author: Aiden Ecamilla
+*Date: 15 September, 2021
+*
+*
+*Description: returns boolean result after determening if the 
+*		given char array is or isnt a magic square. Uses for loops and additive sums to make sure
+*		all the rows cols and diags match.
+*
+*Parameters: 	
+*	magicSquare	I/P	char*	9 character array with magic square ints in it
 */
 bool isMagicSquare(char *magicSquare){
 
