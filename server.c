@@ -119,10 +119,9 @@ int main(int argc, char *argv[]){
 				fclose(client);			//close client pipe, need this before the break statment;
 				fclose(fp);	//close server pipe, maybe remove because clients close for us
 				remove(filename);//clean up server pipe
-				break;	//break out of loop
-			// not needed?	exit(0);	//end code				//could also use exit(0); for simple code
+//				break;	//break out of loop
+				exit(0);	//end code				//could also use exit(0); for simple code
 			}
-			fp = fopen(filename, "r");	//open pipe to look for new clients 
 			}
 //			remove(clientFifo); //is this needed for pipe clean up?
 		}
