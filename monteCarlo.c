@@ -41,8 +41,8 @@ for(int wss = 4; wss <= 20; wss++)
 	// Determine and accumulate the number of page
 	// faults for each algorithm base on the current
 	// working set size and the current trace.
-	LRUResults  [wss] += LRU  ( wss, data );
-	FIFOResults [wss] += FIFO ( wss, data );
+	LRUResults  [wss] += LRU( wss, data );
+	FIFOResults [wss] += FIFO( wss, data );
 	ClockResults[wss] += Clock( wss, data );
 	}
 
@@ -53,7 +53,7 @@ for(int wss = 4;wss <= 20;wss++)
 // Output statistics
 printf("%d LRU: %d\n", wss, LRUResults[wss]/1000);
 printf("%d FIFO: %d\n", wss, FIFOResults[wss]/1000);
-printf("%d Clock: %d\n", wss, ClockResults[wss]/1000);
+printf("%d Clock: %d\n\n", wss, ClockResults[wss]/1000);
 }
 
 return 0;
@@ -77,11 +77,11 @@ do
 {
 U1 = -1 + ((double) rand () / RAND_MAX) * 2;
       U2 = -1 + ((double) rand () / RAND_MAX) * 2;
-      W = pow (U1, 2) + pow (U2, 2);
+      W = pow(U1, 2) + pow(U2, 2);
     }
 while (W >= 1 || W == 0);
 
-mult = sqrt ((-2 * log (W)) / W);
+mult = sqrt((-2 * log(W)) / W);
 X1 = U1 * mult;
 X2 = U2 * mult;
 
@@ -103,7 +103,6 @@ for(int h = 0; h < wss; h++){		//initialize working set
 }
 
 for(int j = 0; j < 1000; j++){		//for every data element
-
 	if(lru[pointer] == -1){			//initialize: if it's an un-used frame
 		lru[pointer] = data[j];		//fill it and update the pointer
 		pointer = (pointer + 1) % wss;
@@ -156,7 +155,7 @@ int fifoArray[wss];
 int pointer = 0, pageFault = 0;
 
 for(int y = 0; y < wss; y++){		//initialize working set
-	fifoArray[wss] = -1;
+	fifoArray[y] = -1;
 }
 
 for(int j = 0; j < 1000; j++)		//for every data element
@@ -165,10 +164,10 @@ for(int j = 0; j < 1000; j++)		//for every data element
 		fifoArray[pointer] = data[j];	//populate it
 		pointer = (pointer + 1) % wss;	//update pointer (will circle around to start)
 	}
-	else if(fifoArray[pointer] == data[j]){			//if the page is mathching
+//	else if(fifoArray[pointer] == data[j]){			//if the page is mathching
 								//DO NOTHING was shown on the slides pointer
-	}
-	else{							//if it's not matching
+//	}
+	else if(fifoArray[pointer] != data[j]){							//if it's not matching
 		fifoArray[pointer] = data[j];			//replace with new page
 		pointer = (pointer + 1) % wss;			//update pointer to round robin replace
 		pageFault++;					//increment page fault
